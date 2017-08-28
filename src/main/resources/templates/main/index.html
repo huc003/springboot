@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>Document</title>
+    <!-- css 文件 -->
+    <link rel="stylesheet" href="/css/foundation-datepicker.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/foundation/5.5.3/css/foundation.min.css"/>
+    <!-- jQuery 库 -->
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <!-- JavaScript 文件 -->
+    <script src="http://cdn.static.runoob.com/libs/foundation/5.5.3/js/foundation.min.js"></script>
+    <!-- modernizr.js 文件 -->
+    <script src="http://cdn.static.runoob.com/libs/foundation/5.5.3/js/vendor/modernizr.js"></script>
+    <style type="text/css">
+        .header{border-bottom:1px solid #ccc;}
+        .MainContainer{width:100%;}
+        .sidebar{width:10%;height: 100%;float:left;border-right:1px solid #ccc;min-height:800px;}
+        .main{width:90%;float:right;padding:5px;}
+        /*.content{padding:0 10px;}*/
+        body{overflow-x:hidden}
+        .li{background:#F5F5F5}
+    </style>
+</head>
+<body style="">
+    <div class="page">
+        <div class="header">
+            <div id="title">
+                <h1>顶部</h1>
+            </div>
+        </div>
+        <div class="MainContainer">
+            <div class="sidebar">
+                <ul class="accordion" data-accordion="data-accordion">
+                    <li class="accordion-navigation ">
+                        <a href="#admin" class="li" style="">系统设置</a>
+                        <div id="admin" class="content active">
+                            <ul>
+                                <li><a href="/main/content?url=/admin/admin&amp;id=admin">管理员</a></li>
+                                <li><a href="/main/content?url=/admin/role&amp;id=admin">角色</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="accordion-navigation">
+                        <a href="#customer" class="li">客户管理</a>
+                        <div id="customer" class="content">
+                            <ul>
+                                <li><a href="/main/content?url=/customer/list&amp;id=customer">客户列表</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="accordion-navigation">
+                        <a href="#capital" class="li">资金管理</a>
+                        <div id="capital" class="content">
+                            <ul>
+                                <li><a href="/main/content?url=/admin/admin">红包券列表</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div  id="main" class="main">
+                <iframe id="if" name="content_frame" width="100%" style="min-height: 900px;" scrolling="auto" onload="iFrameHeight()" marginheight="0" marginwidth="0" th:src="${url}" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+</body>
+<script th:inline="javascript">
+
+    /*<![CDATA[*/
+    $(function () {
+        var s = [[${id}]];
+        $(".content").removeClass('active');
+        $("#"+s).addClass('active');
+    })
+
+    function iframesize(obj) {
+        var pTar = null;
+        if (document.getElementById){
+            pTar = document.getElementById(obj);
+        }else{
+            eval('pTar = ' + obj + ';');
+        }
+        if (pTar && !window.opera){
+            /*begin resizing iframe */
+            pTar.style.display="block";
+            if (pTar.contentDocument && pTar.contentDocument.body.offsetHeight ){
+                /*ns6 syntax*/
+                pTar.height = pTar.contentDocument.body.offsetHeight;
+                //pTar.width = pTar.contentDocument.body.scrollWidth;
+            } else if (pTar.Document && pTar.Document.body.scrollHeight ){
+                /*ie5+ syntax*/
+                pTar.height = pTar.Document.body.scrollHeight;
+                //pTar.width = pTar.Document.body.scrollWidth;
+            }
+        }
+    }
+
+    //获取DIV的高度
+//    autodivheight();
+//    function autodivheight(){ //函数：获取尺寸
+//        //获取浏览器窗口高度
+//        var winHeight=0;
+//        if (window.innerHeight)
+//            winHeight = window.innerHeight;
+//        else if ((document.body) && (document.body.clientHeight))
+//            winHeight = document.body.clientHeight;
+//        //通过深入Document内部对body进行检测，获取浏览器窗口高度
+//        if (document.documentElement && document.documentElement.clientHeight)
+//            winHeight = document.documentElement.clientHeight;
+//        //DIV高度为浏览器窗口的高度
+//        //document.getElementById("test").style.height= winHeight +"px";
+//        //DIV高度为浏览器窗口高度的一半
+//        alert(winHeight);
+//        document.getElementById("if").style.minHeight= winHeight*2 +"px";
+//    }
+//    window.onresize=autodivheight; //浏览器窗口发生变化时同时变化DIV高度
+
+    function iFrameHeight() {
+        var ifm= document.getElementById("if");
+        var subWeb = document.frames ? document.frames["if"].document : ifm.contentDocument;
+        if(ifm != null && subWeb != null) {
+            ifm.height = subWeb.body.scrollHeight;
+        }
+    }
+
+    /*]]>*/
+</script>
+<!-- 初始化 Foundation JS -->
+<script>
+    /*<![CDATA[*/
+    $(document).ready(function() {
+        $(document).foundation();
+    })
+    /*]]>*/
+</script>
+</html>
