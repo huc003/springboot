@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dao.UserMapper">
+  <resultMap id="BaseResultMap" type="com.example.model.User">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="realname" jdbcType="VARCHAR" property="realname" />
+    <result column="card_id" jdbcType="VARCHAR" property="cardId" />
+    <result column="sex" jdbcType="INTEGER" property="sex" />
+    <result column="age" jdbcType="INTEGER" property="age" />
+    <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="addtime" jdbcType="INTEGER" property="addtime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, username, password, realname, card_id, sex, age, nick_name, status, addtime
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dw_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectUserList" parameterType="com.example.request.model.UserRequestBean" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dw_user 
+    <include refid="selectWhere" />
+    limit #{record.offset},#{record.rows}
+  </select>
+  
+  <select id="selectUserCount" parameterType="com.example.request.model.UserRequestBean" resultType="int">
+    select 
+    count(1)
+    from dw_user 
+    <include refid="selectWhere" />
+  </select>
+  
+  <sql id="selectWhere">
+  	<where>
+	  	<if test="record.id != null">
+	  		 and id = #{record.id,jdbcType=INTEGER}
+	  	</if>
+	  	<if test="record.realname != null &amp;&amp; record.realname != ''">
+	  		 and realname = #{record.realname,jdbcType=VARCHAR}
+	  	</if>
+	  	<if test="record.username != null &amp;&amp; record.username != ''">
+	  		 and username = #{record.username,jdbcType=VARCHAR}
+	  	</if>
+	  	<if test="record.status != null">
+	  		 and status = #{record.status,jdbcType=INTEGER}
+	  	</if>
+	  	<if test="record.sTime != null">
+	  		 and addtime &gt;= #{record.sTime,jdbcType=INTEGER}
+	  	</if>
+	  	<if test="record.eTime != null">
+	  		 <![CDATA[and addtime <= #{record.eTime,jdbcType=INTEGER}]]>
+	  	</if>
+	  	<if test="record.sex != null">
+	  		 and sex = #{record.sex,jdbcType=INTEGER}
+	  	</if>
+	 </where>
+  </sql>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from dw_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.model.User">
+    insert into dw_user (id, username, password, 
+      realname, card_id, sex, 
+      age, nick_name, status, 
+      addtime)
+    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{realname,jdbcType=VARCHAR}, #{cardId,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, 
+      #{age,jdbcType=INTEGER}, #{nickName,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
+      #{addtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.model.User">
+    insert into dw_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="username != null">
+        username,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="realname != null">
+        realname,
+      </if>
+      <if test="cardId != null">
+        card_id,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="age != null">
+        age,
+      </if>
+      <if test="nickName != null">
+        nick_name,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="addtime != null">
+        addtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="realname != null">
+        #{realname,jdbcType=VARCHAR},
+      </if>
+      <if test="cardId != null">
+        #{cardId,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="age != null">
+        #{age,jdbcType=INTEGER},
+      </if>
+      <if test="nickName != null">
+        #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="addtime != null">
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.model.User">
+    update dw_user
+    <set>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="realname != null">
+        realname = #{realname,jdbcType=VARCHAR},
+      </if>
+      <if test="cardId != null">
+        card_id = #{cardId,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="age != null">
+        age = #{age,jdbcType=INTEGER},
+      </if>
+      <if test="nickName != null">
+        nick_name = #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="addtime != null">
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.model.User">
+    update dw_user
+    set username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      realname = #{realname,jdbcType=VARCHAR},
+      card_id = #{cardId,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=INTEGER},
+      age = #{age,jdbcType=INTEGER},
+      nick_name = #{nickName,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      addtime = #{addtime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+</mapper>

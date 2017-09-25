@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dao.MenuMapper">
+  <resultMap id="BaseResultMap" type="com.example.model.Menu">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="menu_id" jdbcType="VARCHAR" property="menuId" />
+    <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+    <result column="upper_level" jdbcType="INTEGER" property="upperLevel" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, menu_id, menu_name, upper_level, url, code, sort, icon
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dw_menu
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectUpperLevelMenuList" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select * from dw_menu where upper_level = 0 order by sort asc
+  </select>
+  
+  <select id="selectMenuList" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		<![CDATA[select * from dw_menu where upper_level <> 0 order by sort asc]]>
+  </select>
+  
+  <select id="selectUpperLevelMenuListByUser" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select * from dw_menu where upper_level = 0 <if test="menu != null &amp;&amp; menu != ''"> and code in (${menu}) </if> order by sort asc
+  </select>
+  
+  <select id="selectMenuListByUser" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select * from dw_menu where upper_level <![CDATA[<>]]> 0 <if test="menu != null &amp;&amp; menu != ''"> and code in (${menu}) </if> order by sort asc
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from dw_menu
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.model.Menu">
+    insert into dw_menu (id, menu_id, menu_name, 
+      upper_level, url, code, 
+      sort, icon)
+    values (#{id,jdbcType=INTEGER}, #{menuId,jdbcType=VARCHAR}, #{menuName,jdbcType=VARCHAR}, 
+      #{upperLevel,jdbcType=INTEGER}, #{url,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, 
+      #{sort,jdbcType=INTEGER}, #{icon,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.model.Menu">
+    insert into dw_menu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="menuId != null">
+        menu_id,
+      </if>
+      <if test="menuName != null">
+        menu_name,
+      </if>
+      <if test="upperLevel != null">
+        upper_level,
+      </if>
+      <if test="url != null">
+        url,
+      </if>
+      <if test="code != null">
+        code,
+      </if>
+      <if test="sort != null">
+        sort,
+      </if>
+      <if test="icon != null">
+        icon,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="menuId != null">
+        #{menuId,jdbcType=VARCHAR},
+      </if>
+      <if test="menuName != null">
+        #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="upperLevel != null">
+        #{upperLevel,jdbcType=INTEGER},
+      </if>
+      <if test="url != null">
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null">
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null">
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="icon != null">
+        #{icon,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.model.Menu">
+    update dw_menu
+    <set>
+      <if test="menuId != null">
+        menu_id = #{menuId,jdbcType=VARCHAR},
+      </if>
+      <if test="menuName != null">
+        menu_name = #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="upperLevel != null">
+        upper_level = #{upperLevel,jdbcType=INTEGER},
+      </if>
+      <if test="url != null">
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null">
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null">
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="icon != null">
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.model.Menu">
+    update dw_menu
+    set menu_id = #{menuId,jdbcType=VARCHAR},
+      menu_name = #{menuName,jdbcType=VARCHAR},
+      upper_level = #{upperLevel,jdbcType=INTEGER},
+      url = #{url,jdbcType=VARCHAR},
+      code = #{code,jdbcType=VARCHAR},
+      sort = #{sort,jdbcType=INTEGER},
+      icon = #{icon,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
