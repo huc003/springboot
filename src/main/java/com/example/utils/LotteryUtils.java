@@ -13,7 +13,7 @@ public class LotteryUtils {
 	}
 	
 	public static void chromosphere(){
-		for (int n = 0; n < 10; n++) {
+		for (int n = 0; n < 2; n++) {
 			List<Integer> blue = new ArrayList<Integer>();
 			List<Integer> red = new ArrayList<Integer>();
 			for (int i = 1; i <= 33; i++) {
